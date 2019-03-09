@@ -15,20 +15,20 @@ object MovieRecommendation {
     spark.sparkContext.setLogLevel("ERROR")
 
     // Read ratings.csv
-	val ratingsFile = "data/ratings.csv"
-	val dfRatings = spark.read.format("csv")
+    val ratingsFile = "data/ratings.csv"
+    val dfRatings = spark.read.format("csv")
       .option("header", true)
       .load(ratingsFile)
       .select("userId", "movieId", "rating", "timestamp")
     println("First 10 ratings:")
-	dfRatings.show(10)
+    dfRatings.show(10)
 
     // Read movies.csv
-	val moviesFile = "data/movies.csv"
-	val dfMovies = spark.read.format("csv")
+    val moviesFile = "data/movies.csv"
+    val dfMovies = spark.read.format("csv")
       .option("header", "true")
       .load(moviesFile)
-	  .select("movieId", "title", "genres")
+      .select("movieId", "title", "genres")
     println("First 10 movies:")
     dfMovies.show(10)
 
@@ -40,8 +40,8 @@ object MovieRecommendation {
     println()
 
     // Create Spark SQL Table, "ratings" and "movies"
-	dfRatings.createOrReplaceTempView("ratings")
-	dfMovies.createOrReplaceTempView("movies")
+    dfRatings.createOrReplaceTempView("ratings")
+    dfMovies.createOrReplaceTempView("movies")
 
     // Using Spark SQL to query the most rated movies, and show the movie title
     val mostRatedMovies = spark.sql("""
@@ -66,21 +66,21 @@ object MovieRecommendation {
       LIMIT 10
       """)
     println("Most Active Users:")
-	mostActiveUsers.show(10)
+    mostActiveUsers.show(10)
 
 
     // Split data set into traning set and test set, and convert them to RDD
     val splits = dfRatings.randomSplit(Array(0.75, 0.25))
-	val (trainingData, testData) = (splits(0), splits(1))
+    val (trainingData, testData) = (splits(0), splits(1))
 
-	val ratingsRDD = trainingData.rdd.map(row => {
-	  val userId = row.getString(0)
-	  val movieId = row.getString(1)
-	  val ratings = row.getString(2)
-	  Rating(userId.toInt, movieId.toInt, ratings.toDouble)
+    val ratingsRDD = trainingData.rdd.map(row => {
+      val userId = row.getString(0)
+      val movieId = row.getString(1)
+      val ratings = row.getString(2)
+      Rating(userId.toInt, movieId.toInt, ratings.toDouble)
     })
 
-	val testRDD = testData.rdd.map(row => {
+    val testRDD = testData.rdd.map(row => {
       val userId = row.getString(0)
       val movieId = row.getString(1)
       val ratings = row.getString(2)
@@ -88,7 +88,7 @@ object MovieRecommendation {
     })
 
     // Train ALS model
-	val rank = 20
+    val rank = 20
     val numIterations = 15
     val lambda = 0.10
     val alpha = 1.00
