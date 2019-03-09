@@ -1,5 +1,7 @@
 ## Build and Run
 
+[Recommender System With Apache Spark](https://yk.surfingstudio.com/articles/recommender-system-with-apache-spark/)
+
 ``` sh
 $ sbt package
 $ spark-submit --class "MovieRecommendation" \
